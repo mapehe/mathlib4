@@ -5,6 +5,7 @@ Authors: Reid Barton
 -/
 import Mathlib.Topology.Bases
 import Mathlib.Topology.DenseEmbedding
+import Mathlib.Topology.UrysohnsLemma
 
 #align_import topology.stone_cech from "leanprover-community/mathlib"@"0a0ec35061ed9960bf0e7ffb0335f44447b58977"
 
@@ -260,6 +261,81 @@ def stoneCechUnit (x : α) : StoneCech α :=
 theorem denseRange_stoneCechUnit : DenseRange (stoneCechUnit : α → StoneCech α) :=
   denseRange_pure.quotient
 #align dense_range_stone_cech_unit denseRange_stoneCechUnit
+variable {γ : Type u} [TopologicalSpace γ] [T2Space γ] [CompactSpace γ]
+
+class CompletelyRegularSpace (α : Type u) [TopologicalSpace α] [T1Space α] : Prop where
+  completely_regular :
+  ∀ (x : α), ∀ (K : Set α) (_: IsClosed K), Disjoint K {x} →
+    ∃ (f : C(α, ℝ)), EqOn f 0 {x} ∧ EqOn f 1 K ∧ ∀ x, f x ∈ Icc (0 : ℝ) 1
+
+lemma sep [TopologicalSpace α] [T1Space α] [CompletelyRegularSpace α] :
+    ∀ (x y : α), x ≠ y →
+    ∃ (Z : Type u)
+    (_ : TopologicalSpace Z) (_ : T2Space Z) (_ : CompactSpace Z),
+    ∃ (f : C(α, Z)), f x ≠ f y := by
+  intros x y hxy
+  have cx : IsClosed {x} := by apply T1Space.t1
+  have cy : Disjoint {x} ({y} : Set α) := by
+    rw [disjoint_singleton_left, mem_singleton_iff]
+    exact hxy
+  let ⟨f, hfy, hfx, hficc⟩ := CompletelyRegularSpace.completely_regular y {x} cx cy
+  let Z := ULift.{u} <| Set.Icc (0 : ℝ) 1
+  have A1 : CompactSpace Z := Homeomorph.ulift.symm.compactSpace
+  have : T2Space Z := Homeomorph.ulift.symm.t2Space
+  let g : α → Z := fun y' => ⟨f y', hficc y'⟩
+  have hg : Continuous g := continuous_uLift_up.comp (f.2.subtype_mk hficc)
+  have A2: T2Space Z := Homeomorph.ulift.symm.t2Space
+  have O : g x ≠ g y := by
+    have P3 : f y = 0 := by
+      apply hfy
+      rw [mem_singleton_iff]
+    have P4 : f x = 1 := by
+      apply hfx
+      rw [mem_singleton_iff]
+    simp only [ne_eq, ULift.up_inj, Subtype.mk.injEq]
+    rw [P3, P4]
+    exact one_ne_zero
+  exact ⟨Z, ULift.topologicalSpace, A2, A1, ⟨g, hg⟩, O⟩
+
+lemma eq_if_stoneCechUnit_eq {a b : α} {γ : Type u} [TopologicalSpace γ] [T2Space γ]
+    [CompactSpace γ] : stoneCechUnit a = stoneCechUnit b
+    → ∀ (f : α → γ), Continuous f → f a = f b := by
+  intros h f hf
+  have asd : Ultrafilter.extend f (pure a) =  Ultrafilter.extend f (pure b)
+      → f a = f b := by
+    have K : ∀ (a : α), Ultrafilter.extend f (pure a) = f a := by
+      letI : TopologicalSpace α := ⊥
+      haveI : DiscreteTopology α := ⟨rfl⟩
+      exact let_fun O := continuous_of_discreteTopology;
+        DenseInducing.extend_eq denseInducing_pure O
+    intro h
+    have G : Ultrafilter.extend f (pure a) = f a := by apply K a
+    have G2 : Ultrafilter.extend f (pure b) = f b := by apply K b
+    rw [←G, ←G2]
+    exact h
+  have U : (stoneCechSetoid α).1 (pure a) (pure b) := by
+    have U: Quotient.mk (stoneCechSetoid α) (pure a) =
+      Quotient.mk (stoneCechSetoid α) (pure b) → (stoneCechSetoid α).1 (pure a)
+        (pure b):= by
+      rw [Quotient.eq]
+      exact fun rel γ [TopologicalSpace γ] [T2Space γ] [CompactSpace γ] f ↦ rel γ f
+    exact U h
+  exact asd (U γ f hf)
+
+lemma injective_stoneCechUnit [TopologicalSpace α] [T1Space α] [CompletelyRegularSpace α] :
+    Function.Injective (stoneCechUnit : α → StoneCech α) := by
+  intros a b hab
+  have O : ∀ (Z : Type u)
+  (_ : TopologicalSpace Z) (_ : T2Space Z) (_ : CompactSpace Z),
+  ∀ (f : C(α, Z)), f a = f b := by
+    intros h _ _ _ f
+    apply eq_if_stoneCechUnit_eq
+    exact hab
+    exact f.2
+  contrapose O
+  simp only [not_forall, exists_and_left]
+  exact sep a b O
+
 
 section Extension
 
@@ -313,6 +389,218 @@ theorem continuous_stoneCechUnit : Continuous (stoneCechUnit : α → StoneCech 
       continuousAt_iff_ultrafilter.mp (continuous_quotient_mk'.tendsto g) _ this
     rwa [show ⟦g⟧ = ⟦pure x⟧ from Quotient.sound <| convergent_eqv_pure gx] at this
 #align continuous_stone_cech_unit continuous_stoneCechUnit
+
+theorem open_stoneCechUnit [TopologicalSpace α] [T1Space α] [CompletelyRegularSpace α]
+    : ∀ (s : Set α), IsOpen s → ∃ (t : Set (StoneCech α)), IsOpen t ∧
+      stoneCechUnit '' s ⊆ t ∧ stoneCechUnit ⁻¹' t = s := by
+    intros s hs
+    have H : ∀ (x : StoneCech α), ∃ (U : Set (StoneCech α)),
+      IsOpen U ∧ stoneCechUnit ⁻¹' (U) ⊆ s ∧ {x} ∩ (stoneCechUnit '' s) ⊆ U := by
+        intro x
+        have hx : (x ∈ stoneCechUnit '' s) ∨ (x ∉ stoneCechUnit '' s) := by apply or_not
+        cases hx
+        have A : ∃ (a : α), a ∈ s ∧ stoneCechUnit a = x := by
+          have B : x ∈ stoneCechUnit '' s := by assumption
+          rw [mem_image] at B
+          let b := B.choose
+          let hb := B.choose_spec
+          use b
+        let a := A.choose
+        let ⟨ha, _⟩ := A.choose_spec
+        let K := sᶜ
+        have Kc : IsClosed K := by
+          rw [isClosed_compl_iff]
+          exact hs
+        have Kd : Disjoint K {a} := by
+          simp
+          exact ha
+        let fact := CompletelyRegularSpace.completely_regular a K Kc Kd
+        let f := fact.choose
+        let ⟨hf, hhf, hhhf⟩ := fact.choose_spec
+        let Z := ULift.{u} <| Set.Icc (0 : ℝ) 1
+        have hZ : CompactSpace Z := Homeomorph.ulift.symm.compactSpace
+        have : T2Space Z := Homeomorph.ulift.symm.t2Space
+        let g : α → Z := fun y' => ⟨f y', hhhf y'⟩
+        have hg : Continuous g := continuous_uLift_up.comp (f.2.subtype_mk hhhf)
+        have hhZ: T2Space Z := Homeomorph.ulift.symm.t2Space
+        let z1 : Z := ⟨0, by simp⟩
+        let z2 : Z := ⟨1, by simp⟩
+        have hz12 : z1 ≠ z2 := by simp
+        let ⟨u, v, hu, _, hhu, hhv, huv⟩ := T2Space.t2 z1 z2 hz12
+        let φ := stoneCechExtend hg
+        use φ ⁻¹' u
+        have P2 : (g ⁻¹' v) ∩ (g ⁻¹' u) = ∅ := by
+          rw [←preimage_inter]
+          have D : v ∩ u = ∅ := by
+            rw [disjoint_iff] at huv
+            have B : u ⊓ v = ⊥ → v ∩ u = ∅ := by
+              exact
+                id
+                  (let_fun refl := inter_comm u v;
+                  fun h ↦ Eq.mpr (id (refl.symm ▸ Eq.refl (v ∩ u = ∅))) h)
+            apply B
+            exact huv
+          rw [D]
+          apply preimage_empty
+        have fact1 := IsOpen.preimage (continuous_stoneCechExtend hg) hu
+        have fact2 : stoneCechUnit ⁻¹' (φ ⁻¹' u) ⊆ s := by
+          rw [←preimage_comp]
+          have P : φ ∘ stoneCechUnit = g := by apply stoneCechExtend_extends
+          rw [P]
+          have C1 : sᶜ ⊆  g ⁻¹' v := by
+            intro a ha
+            rw [mem_preimage]
+            have val : g a = z2 := by
+              simp only [eqOn_singleton, Pi.zero_apply, ge_iff_le, zero_le_one, not_true, gt_iff_lt,
+                mem_Icc, ULift.up_inj, Subtype.mk.injEq]
+              let p := hhf ha
+              simp at p
+              exact p
+            rw [val]
+            exact hhv
+          have C2 : g ⁻¹' u ∩ sᶜ = ∅ := by
+            have W : g ⁻¹' u ∩ g ⁻¹' v = ∅ → g ⁻¹' u ∩ sᶜ = ∅ := by
+              intro h
+              replace C1 := (inter_subset_inter_right (g ⁻¹' u) C1)
+              rw [h] at C1
+              rw [subset_empty_iff] at C1
+              exact C1
+            apply W
+            rw [inter_comm] at P2
+            exact P2
+          contrapose C2
+          have R : (g ⁻¹' u ∩ sᶜ).Nonempty → ¬g ⁻¹' u ∩ sᶜ = ∅ := by
+            rw [←not_nonempty_iff_eq_empty]
+            rw [not_not]
+            exact fun h ↦ h
+          apply R
+          rw [inter_compl_nonempty_iff]
+          exact C2
+        have fact3 : {x} ∩ stoneCechUnit '' s ⊆ φ ⁻¹' u := by
+          let ⟨_, ha⟩ := A.choose_spec
+          rw [←ha, ←image_singleton, ←image_inter injective_stoneCechUnit]
+          rw [image_subset_iff, ←preimage_comp]
+          have P : φ ∘ stoneCechUnit = g := by apply stoneCechExtend_extends
+          rw [P]
+          intro b hb
+          rw [mem_inter_iff] at hb
+          let ⟨hhb, _⟩ := hb
+          rw [mem_preimage]
+          have P : g b = z1 := by
+            simp
+            let p := hf hhb
+            simp at p
+            exact p
+          rw [P]
+          exact hhu
+        exact ⟨fact1, fact2, fact3⟩
+        use ∅
+        have e : {x} ∩ stoneCechUnit '' s = ∅ := by
+          rw [singleton_inter_eq_empty]
+          assumption
+        have e2 : {x} ∩ stoneCechUnit '' s ⊆ ∅ := by
+          rw [subset_empty_iff]
+          exact e
+        exact ⟨isOpen_empty, by simp, e2⟩
+    let F := fun (x : StoneCech α) => (H x).choose
+    have hf : ∀ (x : StoneCech α), IsOpen (F x) := by
+      intro x
+      let ⟨o, _⟩ := (H x).choose_spec
+      exact o
+    have O : IsOpen (⋃ i, (F i)) := by apply isOpen_iUnion hf
+    have sf : ∀ (x : StoneCech α), x ∈ stoneCechUnit '' s → x ∈ (F x) := by
+      intro x hx
+      let ⟨_, _, inc⟩ := (H x).choose_spec
+      have L : {x} ∩ stoneCechUnit '' s = {x} := by
+        simp only [mem_image] at hx
+        simp only [inter_eq_left, singleton_subset_iff, mem_image]
+        exact hx
+      rw [←singleton_subset_iff, ←L]
+      exact inc
+    have ssub : stoneCechUnit '' s ⊆ (⋃ i, (F i)) := by
+      intro x hx
+      specialize sf x hx
+      rw [mem_iUnion]
+      use x
+    have J : s ⊆ stoneCechUnit ⁻¹' (⋃ i, (F i)) := by
+      intro a ha
+      let ⟨_, _, sub2⟩ := (H (stoneCechUnit a)).choose_spec
+      rw [←singleton_subset_iff]
+      rw [←singleton_subset_iff] at ha
+      rw [←image_subset_image_iff injective_stoneCechUnit]
+      simp
+      use a
+      apply And.intro
+      use stoneCechUnit a
+      rw [←singleton_subset_iff]
+      have Q2 : {stoneCechUnit a} ⊆ {stoneCechUnit a} ∩ stoneCechUnit '' s := by
+        simp
+        use a
+        simp
+        rw [singleton_subset_iff] at ha
+        exact ha
+      apply Subset.trans Q2 sub2
+      rfl
+    have P : stoneCechUnit ⁻¹' (⋃ i, (F i)) = s := by
+      have P2 : stoneCechUnit ⁻¹' ⋃ i, F i ⊆ s := by
+        simp
+        intro x
+        let ⟨_, sub, _⟩ := (H x).choose_spec
+        exact sub
+      exact Subset.antisymm P2 J
+    use (⋃ i, (F i))
+
+theorem inducing_stoneCechUnit [TopologicalSpace α] [T1Space α] [CompletelyRegularSpace α]
+    : Inducing (stoneCechUnit : α → StoneCech α) := by
+    rw [inducing_iff_nhds]
+    intro a
+    ext x
+    rw [mem_comap]
+    apply Iff.intro
+    intro hx
+    rw [mem_nhds_iff] at hx
+    let ⟨s, sx, so, mem⟩ := hx
+    let ⟨t, ⟨ot, ct, st⟩⟩ := open_stoneCechUnit s so
+    use t
+    have Q : stoneCechUnit ⁻¹' t ⊆ x := by
+      rw [st]
+      exact sx
+    have Q2 : t ∈ 𝓝 (stoneCechUnit a) := by
+      rw [mem_nhds_iff]
+      use t
+      have S : t ⊆ t := by apply Subset.refl
+      have S2 : stoneCechUnit a ∈ t := by
+        exact
+          let_fun mem := mem_image_of_mem stoneCechUnit mem;
+          let_fun mem := mem_of_subset_of_mem ct mem;
+          mem
+      exact ⟨S, ot, S2⟩
+    exact ⟨Q2, Q⟩
+    intro ⟨t, ⟨ht, ht2⟩⟩
+    have T : stoneCechUnit ⁻¹' t ∈ (𝓝 a)  := by
+      rw [mem_nhds_iff]
+      rw [mem_nhds_iff] at ht
+      let ⟨s, st, so, mem⟩ := ht
+      use (stoneCechUnit ⁻¹' s)
+      rw [mem_preimage]
+      have O : IsOpen (stoneCechUnit ⁻¹' s) := by
+        apply IsOpen.preimage
+        exact continuous_stoneCechUnit
+        exact so
+      have Q : stoneCechUnit ⁻¹' s ⊆ stoneCechUnit ⁻¹' t := by
+        apply preimage_mono
+        exact st
+      exact ⟨Q, O, mem⟩
+    replace ht2 := sets_of_superset (𝓝 a) T ht2
+    exact ht2
+
+theorem denseInducing_stoneCechUnit [TopologicalSpace α] [T1Space α] [CompletelyRegularSpace α] :
+  @DenseInducing _ _ _ _ (stoneCechUnit : α → StoneCech α) :=
+  ⟨inducing_stoneCechUnit, denseRange_stoneCechUnit⟩
+
+theorem denseEmbedding_stoneCechUnit [TopologicalSpace α] [T1Space α] [CompletelyRegularSpace α] :
+    @DenseEmbedding _ _ _ _ (stoneCechUnit : α → StoneCech α) :=
+  { denseInducing_stoneCechUnit with inj := injective_stoneCechUnit }
 
 instance StoneCech.t2Space : T2Space (StoneCech α) := by
   rw [t2_iff_ultrafilter]
