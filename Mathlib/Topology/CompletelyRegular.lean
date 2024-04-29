@@ -5,6 +5,7 @@ Authors: Matias Heikkilä
 -/
 import Mathlib.Topology.UrysohnsLemma
 import Mathlib.Topology.UnitInterval
+import Mathlib.Topology.StoneCech
 
 /-!
 # Completely regular topological spaces.
@@ -102,3 +103,42 @@ lemma separatesPoints_continuous_of_t35Space [T35Space X] :
   obtain ⟨f, f_cont, f_zero, f_one⟩ :=
     CompletelyRegularSpace.completely_regular x {y} isClosed_singleton x_ne_y
   exact ⟨fun x ↦ f x, continuous_subtype_val.comp f_cont, by aesop⟩
+
+lemma separatesPoints_continuous_to_compact_t2_of_t35Space [T35Space X] {x y : X} :
+    x ≠ y → ∃ (Z : Type u) (_ : TopologicalSpace Z) (_ : T2Space Z) (_ : CompactSpace Z)
+    (f : X → Z) (_ : Continuous f), f x ≠ f y := by
+  intro hxy
+  have cx : IsClosed {x} := by apply T1Space.t1
+  have notin : y ∉ ({x} : Set X) := by
+    exact fun k ↦ hxy (of_eq_true ((congrArg (Eq x) k).trans (eq_self x)))
+  let ⟨f, hfc, hfy, hfx⟩ := CompletelyRegularSpace.completely_regular y {x} cx notin
+  let ficc : ∀ (x : X), (f x : ℝ) ∈ I := by exact fun x ↦ Subtype.coe_prop (f x)
+  let Z := ULift.{u} <| I
+  let g : X → Z := fun y' => ⟨f y', ficc y'⟩
+  have fg : ∀ (x : X), g x = ⟨f x, ficc x⟩ := by
+    simp only [Subtype.coe_eta, implies_true]
+  have hg : Continuous g := continuous_uLift_up.comp hfc
+  have gneq : g x ≠ g y := by
+    have y_zero : g y = 0 := by
+      simp only [fg y, hfy]
+      rfl
+    have x_one : g x = 1 := by
+      simp only [fg x, Subtype.coe_eta]
+      rw [hfx]
+      rfl
+      simp only [mem_singleton_iff]
+    simp only [ne_eq, ULift.up_inj, Subtype.mk.injEq]
+    rw [y_zero, x_one]
+    exact one_ne_zero
+  exact ⟨Z, ULift.topologicalSpace, Homeomorph.ulift.symm.t2Space,
+    Homeomorph.ulift.symm.compactSpace, g, hg, gneq⟩
+
+lemma injective_stoneCechUnit_t35Space [T35Space X]:
+    Function.Injective (stoneCechUnit : X → StoneCech X) := by
+  intros a b hab
+  have ceq : ∀ (Z : Type u) (_ : TopologicalSpace Z) (_ : T2Space Z) (_ : CompactSpace Z)
+      (f : X → Z) (_ : Continuous f), f a = f b := by
+    exact fun Z x x_1 x_2 f hf ↦ eq_if_stoneCechUnit_eq hf hab
+  contrapose ceq
+  simp only [not_forall, exists_and_left]
+  exact separatesPoints_continuous_to_compact_t2_of_t35Space ceq
