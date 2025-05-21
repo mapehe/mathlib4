@@ -146,5 +146,20 @@ lemma injective_stoneCechUnit_of_t35Space [T35Space X] :
   obtain ⟨f, fc, fab⟩ := separatesPoints_continuous_of_t35Space_Icc hab
   exact fun q ↦ fab (eq_if_stoneCechUnit_eq fc q)
 
+lemma isInducing_stoneCechUnit_of_t35Space [T35Space X] :
+    @IsInducing _ _ _ _ (stoneCechUnit : X → StoneCech X) := by
+    rw [isInducing_iff]
+    sorry
+
+lemma isDenseInducing_stoneCechUnit_of_t35Space [T35Space X] :
+    @IsDenseInducing _ _ _ _ (stoneCechUnit : X → StoneCech X) := 
+    { isInducing_stoneCechUnit_of_t35Space with
+      dense := denseRange_stoneCechUnit }
+
+theorem isDenseEmbedding_stoneCechUnit_of_t35Space [T35Space X] :
+    @IsDenseEmbedding _ _ _ _ (stoneCechUnit : X → StoneCech X) := 
+    { isDenseInducing_stoneCechUnit_of_t35Space with
+      injective := injective_stoneCechUnit_of_t35Space }
+
 @[deprecated (since := "2025-04-13")]
 alias injective_stoneCechUnit_of_completelyRegularSpace := injective_stoneCechUnit_of_t35Space
