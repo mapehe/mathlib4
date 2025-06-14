@@ -141,13 +141,15 @@ def DenseRange {α : Type*} (f : α → X) := Dense (range f)
 
 lemma Dense.mono {A B : Set X} (hA : Dense A) (hAB : A ⊆ B) : Dense B := by
   rw [Dense] at hA ⊢
+  intro x
+  specialize hA x
   sorry
 
 /-- If `f ∘ g` has dense range, then so does `f`. -/
 lemma DenseRange.comp_left {α β : Type*} {f : α → X} {g : β → α}
   (h : DenseRange (f ∘ g)) : DenseRange f := by
   rw [DenseRange] at h ⊢
-  have Q : range (f ∘ g) ⊆ range f := sorry
+  have Q : range (f ∘ g) ⊆ range f := by sorry
   exact h.mono Q
 
 
