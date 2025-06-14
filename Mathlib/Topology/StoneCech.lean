@@ -398,19 +398,23 @@ lemma exists_continuous_image_of_stoneCech
   ∃ g : C(StoneCech α, β),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
   use ⟨stoneCechExtend cf, continuous_stoneCechExtend cf⟩
-  have S : Function.Surjective (stoneCechExtend cf) := by 
+  --have S : Function.Surjective (stoneCechExtend cf) := by 
+  apply And.intro
+  focus
     rw [←Set.range_eq_univ]
-    have dns : Dense (range (stoneCechExtend cf)) := by
-      rw [←stoneCechExtend_extends cf] at df
-      exact DenseRange.of_comp df
-    have amp : closure (range (stoneCechExtend cf)) = range (stoneCechExtend cf) := by
-      rw [IsClosed.closure_eq]
-      apply IsCompact.isClosed
-      rw [←Set.image_univ]
-      exact IsCompact.image isCompact_univ (continuous_stoneCechExtend cf)
-    rw [←amp]
-    apply dns.closure_eq
-  exact ⟨S, stoneCechExtend_extends cf⟩
+    simp only [ContinuousMap.coe_mk]
+    sorry
+    -- have dns : Dense (range (stoneCechExtend cf)) := by
+    --   rw [←stoneCechExtend_extends cf] at df
+    --   exact DenseRange.of_comp df
+    -- have amp : closure (range (stoneCechExtend cf)) = range (stoneCechExtend cf) := by
+    --   rw [IsClosed.closure_eq]
+    --   apply IsCompact.isClosed
+    --   rw [←Set.image_univ]
+    --   exact IsCompact.image isCompact_univ (continuous_stoneCechExtend cf)
+    -- rw [←amp]
+    -- apply dns.closure_eq
+  exact stoneCechExtend_extends cf
 
 end Extension
 
