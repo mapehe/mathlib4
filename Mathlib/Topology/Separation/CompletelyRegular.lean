@@ -205,7 +205,7 @@ lemma exists_continuous_image_of_stoneCech
     have dns : Dense (range (stoneCechExtend C)) := sorry
     have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := sorry
     rw [←amp]
-    sorry
+    apply dns.closure_eq
   exact ⟨S, stoneCechExtend_extends C⟩
 
 
