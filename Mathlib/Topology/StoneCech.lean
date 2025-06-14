@@ -414,8 +414,6 @@ lemma exists_continuous_image_of_stoneCech
     apply dns.closure_eq
   exact ⟨S, stoneCechExtend_extends C⟩
 
-
-
 end Extension
 
 end StoneCech
