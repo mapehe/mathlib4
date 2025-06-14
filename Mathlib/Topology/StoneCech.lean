@@ -395,7 +395,7 @@ lemma exists_continuous_image_of_stoneCech
   ∃ g : C(StoneCech α, β),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
   have C : Continuous f := hf.toIsDenseInducing.toIsInducing.continuous
-  obtain ⟨⟨_, d⟩, _⟩ := hf
+  have d := hf.toIsDenseInducing.dense
   use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
   have S : Function.Surjective (stoneCechExtend C) := by 
     rw [←Set.range_eq_univ]
