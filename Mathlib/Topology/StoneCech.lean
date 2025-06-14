@@ -409,8 +409,7 @@ lemma exists_continuous_image_of_stoneCech
     have dns : Dense (range (stoneCechExtend cf)) := by
       rw [←stoneCechExtend_extends cf] at df
       exact DenseRange.of_comp df
-    have Q := IsCompact.isClosed C
-    rw [←IsClosed.closure_eq Q]
+    rw [←IsClosed.closure_eq (IsCompact.isClosed C)]
     apply dns.closure_eq
   exact stoneCechExtend_extends cf
 
