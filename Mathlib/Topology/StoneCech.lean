@@ -398,7 +398,6 @@ lemma exists_continuous_image_of_stoneCech
   ∃ g : C(StoneCech α, β),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
   use ⟨stoneCechExtend cf, continuous_stoneCechExtend cf⟩
-  --have S : Function.Surjective (stoneCechExtend cf) := by 
   apply And.intro
   focus
     rw [←Set.range_eq_univ]
