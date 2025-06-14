@@ -138,9 +138,17 @@ def Dense (s : Set X) : Prop :=
 /-- `f : α → X` has dense range if its range (image) is a dense subset of `X`. -/
 def DenseRange {α : Type*} (f : α → X) := Dense (range f)
 
+
+lemma Dense.mono {A B : Set X} (hA : Dense A) (hAB : A ⊆ B) : Dense B := by
+  rw [Dense] at hA ⊢
+  sorry
+
 /-- If `f ∘ g` has dense range, then so does `f`. -/
 lemma DenseRange.comp_left {α β : Type*} {f : α → X} {g : β → α}
-  (h : DenseRange (f ∘ g)) : DenseRange f := by sorry
+  (h : DenseRange (f ∘ g)) : DenseRange f := by
+  rw [DenseRange] at h ⊢
+  have Q : range (f ∘ g) ⊆ range f := sorry
+  exact h.mono Q
 
 
 /-- A function between topological spaces is continuous if the preimage
