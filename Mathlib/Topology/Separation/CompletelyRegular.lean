@@ -190,3 +190,13 @@ lemma t35Space_iff_isEmbedding_stoneCechUnit :
     T35Space X ↔ IsEmbedding (stoneCechUnit : X → StoneCech X) where
   mp _ := isEmbedding_stoneCechUnit
   mpr hs := hs.t35Space
+
+lemma exists_continuous_image_of_stoneCech
+  {Y : Type u} [TopologicalSpace Y] [CompactSpace Y]
+  {f : X → Y} (hf : IsDenseEmbedding f) :
+  ∃ g : C(StoneCech X, Y),
+    Function.Surjective g ∧
+    ∀ x : X, g (stoneCechUnit x) = f x := by
+  sorry
+
+
