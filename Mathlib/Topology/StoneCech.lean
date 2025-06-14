@@ -389,10 +389,6 @@ lemma eq_if_stoneCechUnit_eq {a b : α} {f : α → β} (hcf : Continuous f)
   rw [← congrFun (stoneCechExtend_extends hcf), ← congrFun (stoneCechExtend_extends hcf)]
   exact congrArg (stoneCechExtend hcf) h
 
-lemma DenseRange.of_comp {α β X : Type*} [TopologicalSpace X] {f : α → X} {g : β → α}
-    (h : DenseRange (f ∘ g)) : DenseRange f :=
-  Dense.mono (range_comp_subset_range g f) h
-
 lemma exists_continuous_image_of_stoneCech
   {f : α → β} (df : DenseRange f) (cf : Continuous f) :
   ∃ g : C(StoneCech α, β),
