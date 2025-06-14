@@ -374,10 +374,7 @@ theorem Dense.mono (h : s₁ ⊆ s₂) (hd : Dense s₁) : Dense s₂ := fun x =
 
 /-- If `f ∘ g` has dense range, then so does `f`. -/
 lemma DenseRange.comp_left {α β : Type*} {f : α → X} {g : β → α}
-  (h : DenseRange (f ∘ g)) : DenseRange f := by
-  rw [DenseRange] at h ⊢
-  have Q : range (f ∘ g) ⊆ range f := by sorry
-  exact h.mono Q
+  (h : DenseRange (f ∘ g)) : DenseRange f := h.mono (Set.range_comp_subset_range f g)
 
 /-- Complement to a singleton is dense if and only if the singleton is not an open set. -/
 theorem dense_compl_singleton_iff_not_open :
