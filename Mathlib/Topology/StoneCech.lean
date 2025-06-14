@@ -390,9 +390,9 @@ lemma eq_if_stoneCechUnit_eq {a b : α} {f : α → β} (hcf : Continuous f)
   exact congrArg (stoneCechExtend hcf) h
 
 lemma exists_continuous_image_of_stoneCech
-  {X Y : Type u} [TopologicalSpace Y] [CompactSpace Y] [T2Space Y] [TopologicalSpace X]
-  {f : X → Y} (hf : IsDenseEmbedding f) :
-  ∃ g : C(StoneCech X, Y),
+  [CompactSpace β]
+  {f : α → β} (hf : IsDenseEmbedding f) :
+  ∃ g : C(StoneCech α, β),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
   have C : Continuous f := hf.toIsDenseInducing.toIsInducing.continuous
   obtain ⟨⟨_, d⟩, _⟩ := hf
