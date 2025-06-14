@@ -192,7 +192,6 @@ lemma t35Space_iff_isEmbedding_stoneCechUnit :
   mpr hs := hs.t35Space
 
 lemma exists_continuous_image_of_stoneCech
-  [T35Space X]
   {Y : Type u} [TopologicalSpace Y] [CompactSpace Y] [T2Space Y]
   {f : X → Y} (hf : IsDenseEmbedding f) :
   ∃ g : C(StoneCech X, Y),
