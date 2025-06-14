@@ -202,7 +202,8 @@ lemma exists_continuous_image_of_stoneCech
   have S : Function.Surjective (stoneCechExtend C) := by 
     rw [←Set.range_eq_univ]
     have cmp : IsCompact (range (stoneCechExtend C)) := sorry
-    have dns : Dense (range (stoneCechExtend C)) := sorry
+    have dns : Dense (range (stoneCechExtend C)) := by
+      sorry
     have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
       rw [IsClosed.closure_eq]
       apply IsCompact.isClosed
