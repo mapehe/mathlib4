@@ -203,7 +203,9 @@ lemma exists_continuous_image_of_stoneCech
     rw [←Set.range_eq_univ]
     have cmp : IsCompact (range (stoneCechExtend C)) := sorry
     have dns : Dense (range (stoneCechExtend C)) := sorry
-    have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := sorry
+    have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
+      rw [IsClosed.closure_eq]
+      sorry
     rw [←amp]
     apply dns.closure_eq
   exact ⟨S, stoneCechExtend_extends C⟩
