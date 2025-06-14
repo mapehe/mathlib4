@@ -193,11 +193,16 @@ lemma t35Space_iff_isEmbedding_stoneCechUnit :
 
 lemma exists_continuous_image_of_stoneCech
   [T35Space X]
-  {Y : Type u} [TopologicalSpace Y] [CompactSpace Y]
+  {Y : Type u} [TopologicalSpace Y] [CompactSpace Y] [T2Space Y]
   {f : X → Y} (hf : IsDenseEmbedding f) :
   ∃ g : C(StoneCech X, Y),
     Function.Surjective g ∧
     ∀ x : X, g (stoneCechUnit x) = f x := by
-  sorry
+  have C : Continuous f := sorry
+  have F := stoneCechExtend C
+  have FC : Continuous F := sorry
+  use ⟨F, FC⟩ 
+  have S : Function.Surjective F := sorry
+  exact ⟨S, sorry⟩
 
 
