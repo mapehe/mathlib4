@@ -205,7 +205,6 @@ theorem closure_mono (h : s ⊆ t) : closure s ⊆ closure t :=
 theorem monotone_closure (X : Type*) [TopologicalSpace X] : Monotone (@closure X _) := fun _ _ =>
   closure_mono
 
-
 theorem diff_subset_closure_iff : s \ t ⊆ closure t ↔ s ⊆ closure t := by
   rw [diff_subset_iff, union_eq_self_of_subset_left subset_closure]
 
