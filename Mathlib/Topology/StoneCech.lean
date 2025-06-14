@@ -402,13 +402,13 @@ lemma exists_continuous_image_of_stoneCech
   focus
     rw [←Set.range_eq_univ]
     simp only [ContinuousMap.coe_mk]
-    have C : IsCompact (range (stoneCechExtend cf)) := by
+    have cnt : IsCompact (range (stoneCechExtend cf)) := by
       rw [←Set.image_univ]
       exact IsCompact.image isCompact_univ (continuous_stoneCechExtend cf)
     have dns : Dense (range (stoneCechExtend cf)) := by
       rw [←stoneCechExtend_extends cf] at df
       exact DenseRange.of_comp df
-    rw [←IsClosed.closure_eq (IsCompact.isClosed C)]
+    rw [←IsClosed.closure_eq (IsCompact.isClosed cnt)]
     apply dns.closure_eq
   exact stoneCechExtend_extends cf
 
