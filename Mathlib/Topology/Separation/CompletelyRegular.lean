@@ -206,6 +206,7 @@ lemma exists_continuous_image_of_stoneCech
     have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
       rw [IsClosed.closure_eq]
       apply IsCompact.isClosed
+      rw [←Set.image_univ]
       sorry
     rw [←amp]
     apply dns.closure_eq
