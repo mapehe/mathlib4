@@ -191,29 +191,3 @@ lemma t35Space_iff_isEmbedding_stoneCechUnit :
   mp _ := isEmbedding_stoneCechUnit
   mpr hs := hs.t35Space
 
-lemma exists_continuous_image_of_stoneCech
-  {Y : Type u} [TopologicalSpace Y] [CompactSpace Y] [T2Space Y]
-  {f : X → Y} (hf : IsDenseEmbedding f) :
-  ∃ g : C(StoneCech X, Y),
-    Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
-  have C : Continuous f := hf.toIsDenseInducing.toIsInducing.continuous
-  obtain ⟨⟨_, d⟩, _⟩ := hf
-  use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
-  have S : Function.Surjective (stoneCechExtend C) := by 
-    rw [←Set.range_eq_univ]
-    have dns : Dense (range (stoneCechExtend C)) := by
-      rw [←DenseRange]
-      rw [←stoneCechExtend_extends C] at d
-      sorry
-    have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
-      rw [IsClosed.closure_eq]
-      apply IsCompact.isClosed
-      rw [←Set.image_univ]
-      apply IsCompact.image
-      apply isCompact_univ
-      apply continuous_stoneCechExtend C
-    rw [←amp]
-    apply dns.closure_eq
-  exact ⟨S, stoneCechExtend_extends C⟩
-
-
