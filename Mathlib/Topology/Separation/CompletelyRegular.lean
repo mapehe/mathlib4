@@ -208,7 +208,11 @@ lemma exists_continuous_image_of_stoneCech
       apply IsCompact.isClosed
       rw [←Set.image_univ]
       apply IsCompact.image
-      sorry
+      have compact_univ : CompactSpace (StoneCech X) → IsCompact (univ : Set (StoneCech X)) := by
+        intro h
+        simpa using isCompact_univ
+      apply compact_univ
+      infer_instance
       sorry
     rw [←amp]
     apply dns.closure_eq
