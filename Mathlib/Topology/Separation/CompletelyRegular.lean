@@ -196,12 +196,10 @@ lemma exists_continuous_image_of_stoneCech
   {Y : Type u} [TopologicalSpace Y] [CompactSpace Y] [T2Space Y]
   {f : X → Y} (hf : IsDenseEmbedding f) :
   ∃ g : C(StoneCech X, Y),
-    Function.Surjective g ∧
-    ∀ x : X, g (stoneCechUnit x) = f x := by
+    Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
   have C : Continuous f := sorry
   use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
   have S : Function.Surjective (stoneCechExtend C) := sorry
-  have U : ∀ (x : X), (stoneCechExtend C) (stoneCechUnit x) = f x := sorry
-  exact ⟨S, U⟩
+  exact ⟨S, stoneCechExtend_extends C⟩
 
 
