@@ -205,6 +205,7 @@ theorem closure_mono (h : s ⊆ t) : closure s ⊆ closure t :=
 theorem monotone_closure (X : Type*) [TopologicalSpace X] : Monotone (@closure X _) := fun _ _ =>
   closure_mono
 
+
 theorem diff_subset_closure_iff : s \ t ⊆ closure t ↔ s ⊆ closure t := by
   rw [diff_subset_iff, union_eq_self_of_subset_left subset_closure]
 
@@ -371,6 +372,13 @@ theorem Dense.nonempty [h : Nonempty X] (hs : Dense s) : s.Nonempty :=
 @[mono]
 theorem Dense.mono (h : s₁ ⊆ s₂) (hd : Dense s₁) : Dense s₂ := fun x =>
   closure_mono h (hd x)
+
+/-- If `f ∘ g` has dense range, then so does `f`. -/
+lemma DenseRange.comp_left {α β : Type*} {f : α → X} {g : β → α}
+  (h : DenseRange (f ∘ g)) : DenseRange f := by
+  rw [DenseRange] at h ⊢
+  have Q : range (f ∘ g) ⊆ range f := by sorry
+  exact h.mono Q
 
 /-- Complement to a singleton is dense if and only if the singleton is not an open set. -/
 theorem dense_compl_singleton_iff_not_open :
