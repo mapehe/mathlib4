@@ -199,11 +199,9 @@ lemma exists_continuous_image_of_stoneCech
     Function.Surjective g ∧
     ∀ x : X, g (stoneCechUnit x) = f x := by
   have C : Continuous f := sorry
-  have F := stoneCechExtend C
-  have FC : Continuous F := sorry
-  use ⟨F, FC⟩ 
-  have S : Function.Surjective F := sorry
-  have U : ∀ (x : X), F (stoneCechUnit x) = f x := sorry
+  use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
+  have S : Function.Surjective (stoneCechExtend C) := sorry
+  have U : ∀ (x : X), (stoneCechExtend C) (stoneCechUnit x) = f x := sorry
   exact ⟨S, U⟩
 
 
