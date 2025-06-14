@@ -395,12 +395,12 @@ lemma exists_continuous_image_of_stoneCech
   ∃ g : C(StoneCech α, β),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
   have C : Continuous f := hf.toIsDenseInducing.toIsInducing.continuous
-  have d := hf.toIsDenseInducing.dense
   use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
   have S : Function.Surjective (stoneCechExtend C) := by 
     rw [←Set.range_eq_univ]
     have dns : Dense (range (stoneCechExtend C)) := by
       rw [←DenseRange]
+      have d := hf.toIsDenseInducing.dense
       rw [←stoneCechExtend_extends C] at d
       exact DenseRange.comp_left d
     have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
