@@ -209,6 +209,7 @@ lemma exists_continuous_image_of_stoneCech
       rw [←Set.image_univ]
       apply IsCompact.image
       sorry
+      sorry
     rw [←amp]
     apply dns.closure_eq
   exact ⟨S, stoneCechExtend_extends C⟩
