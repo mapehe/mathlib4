@@ -394,24 +394,23 @@ lemma DenseRange.of_comp {α β X : Type*} [TopologicalSpace X] {f : α → X} {
   Dense.mono (range_comp_subset_range g f) h
 
 lemma exists_continuous_image_of_stoneCech
-  {f : α → β} (hf : IsDenseEmbedding f) (df : DenseRange f) :
+  {f : α → β} (df : DenseRange f) (cf : Continuous f) :
   ∃ g : C(StoneCech α, β),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
-  have C : Continuous f := hf.toIsDenseInducing.toIsInducing.continuous
-  use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
-  have S : Function.Surjective (stoneCechExtend C) := by 
+  use ⟨stoneCechExtend cf, continuous_stoneCechExtend cf⟩
+  have S : Function.Surjective (stoneCechExtend cf) := by 
     rw [←Set.range_eq_univ]
-    have dns : Dense (range (stoneCechExtend C)) := by
-      rw [←stoneCechExtend_extends C] at df
+    have dns : Dense (range (stoneCechExtend cf)) := by
+      rw [←stoneCechExtend_extends cf] at df
       exact DenseRange.of_comp df
-    have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
+    have amp : closure (range (stoneCechExtend cf)) = range (stoneCechExtend cf) := by
       rw [IsClosed.closure_eq]
       apply IsCompact.isClosed
       rw [←Set.image_univ]
-      exact IsCompact.image isCompact_univ (continuous_stoneCechExtend C)
+      exact IsCompact.image isCompact_univ (continuous_stoneCechExtend cf)
     rw [←amp]
     apply dns.closure_eq
-  exact ⟨S, stoneCechExtend_extends C⟩
+  exact ⟨S, stoneCechExtend_extends cf⟩
 
 end Extension
 
