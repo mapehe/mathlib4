@@ -203,6 +203,7 @@ lemma exists_continuous_image_of_stoneCech
   have FC : Continuous F := sorry
   use ⟨F, FC⟩ 
   have S : Function.Surjective F := sorry
-  exact ⟨S, sorry⟩
+  have U : ∀ (x : X), F (stoneCechUnit x) = f x := sorry
+  exact ⟨S, U⟩
 
 
