@@ -389,12 +389,11 @@ lemma eq_if_stoneCechUnit_eq {a b : α} {f : α → β} (hcf : Continuous f)
   rw [← congrFun (stoneCechExtend_extends hcf), ← congrFun (stoneCechExtend_extends hcf)]
   exact congrArg (stoneCechExtend hcf) h
 
-lemma DenseRange.of_comp {α β : Type*} {f : α → X} {g : β → α}
+lemma DenseRange.of_comp {α β X : Type*} [TopologicalSpace X] {f : α → X} {g : β → α}
     (h : DenseRange (f ∘ g)) : DenseRange f :=
   Dense.mono (range_comp_subset_range g f) h
 
 lemma exists_continuous_image_of_stoneCech
-  [CompactSpace β]
   {f : α → β} (hf : IsDenseEmbedding f) :
   ∃ g : C(StoneCech α, β),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
@@ -406,7 +405,7 @@ lemma exists_continuous_image_of_stoneCech
       rw [←DenseRange]
       have d := hf.toIsDenseInducing.dense
       rw [←stoneCechExtend_extends C] at d
-      exact DenseRange.comp_left d
+      exact DenseRange.of_comp d
     have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
       rw [IsClosed.closure_eq]
       apply IsCompact.isClosed
