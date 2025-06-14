@@ -204,6 +204,7 @@ lemma exists_continuous_image_of_stoneCech
     rw [←Set.range_eq_univ]
     have dns : Dense (range (stoneCechExtend C)) := by
       rw [←DenseRange]
+      rw [←stoneCechExtend_extends C] at d
       sorry
     have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
       rw [IsClosed.closure_eq]
