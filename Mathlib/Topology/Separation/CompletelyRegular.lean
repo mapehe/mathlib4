@@ -197,7 +197,7 @@ lemma exists_continuous_image_of_stoneCech
   {f : X → Y} (hf : IsDenseEmbedding f) :
   ∃ g : C(StoneCech X, Y),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
-  have C : Continuous f := sorry
+  have C : Continuous f := hf.toIsDenseInducing.toIsInducing.continuous
   use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
   have S : Function.Surjective (stoneCechExtend C) := sorry
   exact ⟨S, stoneCechExtend_extends C⟩
