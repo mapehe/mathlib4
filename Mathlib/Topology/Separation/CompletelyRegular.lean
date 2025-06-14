@@ -198,11 +198,13 @@ lemma exists_continuous_image_of_stoneCech
   ∃ g : C(StoneCech X, Y),
     Function.Surjective g ∧ g ∘ stoneCechUnit = f := by
   have C : Continuous f := hf.toIsDenseInducing.toIsInducing.continuous
+  obtain ⟨⟨_, d⟩, _⟩ := hf
   use ⟨stoneCechExtend C, continuous_stoneCechExtend C⟩ 
   have S : Function.Surjective (stoneCechExtend C) := by 
     rw [←Set.range_eq_univ]
     have cmp : IsCompact (range (stoneCechExtend C)) := sorry
     have dns : Dense (range (stoneCechExtend C)) := by
+      rw [←DenseRange]
       sorry
     have amp : closure (range (stoneCechExtend C)) = range (stoneCechExtend C) := by
       rw [IsClosed.closure_eq]
