@@ -409,7 +409,7 @@ lemma exists_continuous_image_of_stoneCech
       rw [←stoneCechExtend_extends cf] at df
       exact DenseRange.of_comp df
     rw [←IsClosed.closure_eq (IsCompact.isClosed cnt)]
-    apply dns.closure_eq
+    exact Dense.closure_eq dns
   exact stoneCechExtend_extends cf
 
 end Extension
