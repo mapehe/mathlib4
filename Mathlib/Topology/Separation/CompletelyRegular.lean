@@ -203,4 +203,7 @@ def rhoSetoid : Setoid X where
 def TychonoffReflection (X : Type u) [TopologicalSpace X] : Type u :=
   Quotient (rhoSetoid (X := X))
 
+@[simp]
+def tychonoffReflectionUnit (x : X) : TychonoffReflection X := Quotient.mk _ x
+
 
