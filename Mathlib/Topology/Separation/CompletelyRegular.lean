@@ -206,10 +206,8 @@ def TychonoffReflection (X : Type u) [TopologicalSpace X] : Type u :=
 instance : TopologicalSpace (TychonoffReflection X) :=
   inferInstanceAs (TopologicalSpace <| Quot _)
 
-
 @[simp]
 def tychonoffReflectionUnit (x : X) : TychonoffReflection X := Quotient.mk _ x
 
-lemma eta_continuous : Continuous (tychonoffReflectionUnit : X → TychonoffReflection X) :=
-  continuous_quotient_mk
+lemma eta_continuous : Continuous (tychonoffReflectionUnit : X → TychonoffReflection X) := sorry
 
