@@ -200,5 +200,7 @@ def rhoSetoid : Setoid X where
     · intro x y h f; exact (h f).symm
     · intro x y z h₁ h₂ f; exact (h₁ f).trans (h₂ f)
 
-def TychonoffReflection (X : Type u) [TopologicalSpace X] : Quotient (rhoSetoid (X := X))
+def TychonoffReflection (X : Type u) [TopologicalSpace X] : Type u :=
+  Quotient (rhoSetoid (X := X))
+
 
