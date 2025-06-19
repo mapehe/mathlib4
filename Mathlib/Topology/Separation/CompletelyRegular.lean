@@ -214,8 +214,6 @@ lemma continuous_tychonoffReflectionUnit :
     Continuous (tychonoffReflectionUnit : X → TychonoffReflection X) :=
   continuous_quot_mk
 
-
-noncomputable
 def tychonoffExtend (f : C(X, ℝ)) : C(TychonoffReflection X, ℝ) :=
 { toFun := Quotient.lift (fun x : X => f x)
     (by
