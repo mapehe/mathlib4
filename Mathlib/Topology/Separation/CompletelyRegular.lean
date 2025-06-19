@@ -209,3 +209,8 @@ instance : TopologicalSpace (TychonoffReflection X) :=
 @[simp]
 def tychonoffReflectionUnit (x : X) : TychonoffReflection X := Quotient.mk _ x
 
+@[continuity]
+lemma continuous_tychonoffReflectionUnit :
+    Continuous (tychonoffReflectionUnit : X → TychonoffReflection X) :=
+  continuous_quot_mk
+
