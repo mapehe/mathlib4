@@ -190,3 +190,15 @@ lemma t35Space_iff_isEmbedding_stoneCechUnit :
     T35Space X ↔ IsEmbedding (stoneCechUnit : X → StoneCech X) where
   mp _ := isEmbedding_stoneCechUnit
   mpr hs := hs.t35Space
+
+
+def rhoSetoid : Setoid X where
+  r  x y            := ∀ f : C(X, ℝ), f x = f y
+  iseqv             := by
+    refine ⟨?refl, ?symm, ?trans⟩
+    · intro x f; rfl
+    · intro x y h f; exact (h f).symm
+    · intro x y z h₁ h₂ f; exact (h₁ f).trans (h₂ f)
+
+def TychonoffReflection (X : Type u) [TopologicalSpace X] : Quotient (rhoSetoid (X := X))
+
