@@ -192,7 +192,7 @@ lemma t35Space_iff_isEmbedding_stoneCechUnit :
   mpr hs := hs.t35Space
 
 
-def rhoSetoid : Setoid X where
+def tychonoffSetoid : Setoid X where
   r  x y            := ∀ f : C(X, ℝ), f x = f y
   iseqv             := by
     refine ⟨?refl, ?symm, ?trans⟩
@@ -201,7 +201,7 @@ def rhoSetoid : Setoid X where
     · intro x y z h₁ h₂ f; exact (h₁ f).trans (h₂ f)
 
 def TychonoffReflection (X : Type u) [TopologicalSpace X] : Type u :=
-  Quotient (rhoSetoid (X := X))
+  Quotient (tychonoffSetoid (X := X))
 
 instance : TopologicalSpace (TychonoffReflection X) :=
   inferInstanceAs (TopologicalSpace <| Quot _)
