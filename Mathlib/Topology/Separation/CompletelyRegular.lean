@@ -191,6 +191,7 @@ lemma t35Space_iff_isEmbedding_stoneCechUnit :
   mp _ := isEmbedding_stoneCechUnit
   mpr hs := hs.t35Space
 
+section TychonoffReflection
 
 def tychonoffSetoid : Setoid X where
   r  x y            := ∀ f : C(X, ℝ), f x = f y
