@@ -223,12 +223,5 @@ def tychonoffExtend (f : C(X, ℝ)) : C(TychonoffReflection X, ℝ) :=
 
 @[simp]
 lemma tychonoffExtend_extends (f : C(X, ℝ)) (x : X) :
-    tychonoffExtend f (tychonoffReflectionUnit x) = f x := rfl
-
-@[simp] lemma rho_comp (f : C(X, ℝ)) :
-    (tychonoffExtend f).comp
-        ⟨tychonoffReflectionUnit, continuous_tychonoffReflectionUnit⟩ = f := by
-  ext x
-  rfl
-
+    (tychonoffExtend f) ∘ tychonoffReflectionUnit = f := rfl
 
