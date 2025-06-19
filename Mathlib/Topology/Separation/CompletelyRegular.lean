@@ -214,3 +214,23 @@ lemma continuous_tychonoffReflectionUnit :
     Continuous (tychonoffReflectionUnit : X → TychonoffReflection X) :=
   continuous_quot_mk
 
+
+noncomputable
+def tychonoffExtend (f : C(X, ℝ)) : C(TychonoffReflection X, ℝ) :=
+{ toFun := Quotient.lift (fun x : X => f x)
+    (by
+      intro x y hxy
+      exact hxy f),
+  continuous_toFun := by sorry }
+
+@[simp]
+lemma tychonoffExtend_extends (f : C(X, ℝ)) (x : X) :
+    tychonoffExtend f (tychonoffReflectionUnit x) = f x := rfl
+
+@[simp] lemma rho_comp (f : C(X, ℝ)) :
+    (tychonoffExtend f).comp
+        ⟨tychonoffReflectionUnit, continuous_tychonoffReflectionUnit⟩ = f := by
+  ext x
+  rfl
+
+
